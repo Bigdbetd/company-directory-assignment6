@@ -1,52 +1,58 @@
-# Team Management Tree
+# Company Directory Assignment 6
 
-You've joined the internal tools team at a growing tech company. The leadership team wants an interactive tool to visualize how employees report to one another. Some employees manage others, and some only report to a single manager. The company wants a structure that can grow as the team scales.
+A custom binary tree represents the company reporting structure. Employees are linked through `EmployeeNode.left` and `EmployeeNode.right`; the directory does not use a list or dictionary to store employees.
 
-Instead of using a flat list or table, you're tasked with building a **custom binary tree** that represents this hierarchy. Each employee can have up to two direct reports, and you’ll need to build this system using recursive insertion and traversal.
+## Run the menu
 
-Your program should run in the terminal and allow users to:
+Requires Python 3 and only the standard library.
 
-- Add a root team lead (CEO or equivalent)
-- Add new employees under a specific manager (left or right)
-- Print the current reporting structure as a tree
-
-This assignment builds your understanding of **binary trees**, recursive insertion, and tree traversal. These skills are foundational not just for technical interviews, but also for modeling complex, real-world relationships like file systems, routing hierarchies, and decision paths.
-
-## Classes
-
-### `EmployeeNode` Class
-Represents a single employee in the tree.
-
-**Constructor**
-
-```python
-EmployeeNode(name)
+```bash
+python3 tree_builder.py
 ```
 
-**Attributes**
-- `name` (str): The employee's name.
-- `left` (`EmployeeNode` or `None`): Points to the employee's left report.
-- `right` (`EmployeeNode` or `None`): Points to the employee's right report.
+1. Choose **1** to add the team lead.
+2. Choose **2** to enter an existing manager, a new employee, and `left` or `right`.
+3. Choose **3** to print the hierarchy.
+4. Choose **4** to exit.
 
-### `TeamTree` Class
-Manages the full team reporting structure.
+Names must be unique and nonempty. Names are matched case-sensitively after trimming whitespace; sides are case-insensitive. Errors explain empty trees, missing managers, occupied positions, invalid sides, and duplicate names. Existing reports are never overwritten.
 
-**Constructor**
+## Example
 
 ```python
-TeamTree()
+from tree_builder import EmployeeNode, TeamTree
+
+company_directory = TeamTree()
+company_directory.root = EmployeeNode("Jordan")
+company_directory.insert("Jordan", "Taylor", "right")
+company_directory.insert("Jordan", "Riley", "left")
+company_directory.insert("Riley", "Dana", "right")
+company_directory.insert("Riley", "Morgan", "left")
+company_directory.print_tree()
 ```
-**Attributes**
-- `root` (`EmployeeNode` or `None`): The top-most employee in the organization.
 
-**Methods**
+Tree output after the insertion success messages:
 
-`insert(manager_name: str, employee_name: str, side: str) -> None`
-- Recursively searches for `manager_name`.
-- Adds `employee_name` as the `left` or `right` child based on the side argument.
-- Prints a helpful success or error message.
+```text
+- Jordan
+    - Riley
+        - Morgan
+        - Dana
+    - Taylor
+```
 
-`print_tree(node: EmployeeNode or None = None, level: int = 0) -> None`
-- Recursively prints the current team structure from top to bottom.
-- Visually indents based on hierarchy level.
-- Defaults to printing from the root.
+## Tests
+
+```bash
+python3 -m unittest -v
+```
+
+All 10 tests passed locally. They cover constructors, empty trees, left/right insertion, deeper right-branch searches, missing managers, occupied slots, invalid inputs, duplicate names, exact traversal output, and the interactive menu.
+
+`insert(manager_name, employee_name, side, current_node=None)` performs a recursive depth-first search. Normal calls return `True` on success and `False` on rejection. Internal recursive calls use `None` when a manager is absent from that subtree. `print_tree(node=None, level=0)` recursively prints root, left subtree, then right subtree.
+
+## Design memo
+
+The **263-word design memo** is included in a multiline comment at the bottom of `tree_builder.py`. It discusses recursive insertion, search challenges, applications of trees, search complexity, and recursion limits.
+
+Starter template: https://github.com/RizeComputerScience/COMPSV-Assignment6
